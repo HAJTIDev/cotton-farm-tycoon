@@ -1,4 +1,4 @@
-import { Worker } from "@/types/game";
+import { Worker } from "../types/game";
 
 export const initialWorkers: Worker[] = [
   {

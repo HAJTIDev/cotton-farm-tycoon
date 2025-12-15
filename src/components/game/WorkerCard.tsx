@@ -1,6 +1,5 @@
-import { Worker } from "@/types/game";
-import { useState } from "react";
-import { ShieldCheck, Info } from "lucide-react";
+import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Worker } from "../../types/game";
 
 interface WorkerCardProps {
   worker: Worker;
@@ -10,91 +9,136 @@ interface WorkerCardProps {
 }
 
 export const WorkerCard = ({ worker, cost, canAfford, onBuy }: WorkerCardProps) => {
-  const [showBhp, setShowBhp] = useState(false);
-
   const formatNumber = (num: number): string => {
-    if (num >= 1000000) return (num / 1000000).toFixed(1) + "M";
-    if (num >= 1000) return (num / 1000).toFixed(1) + "K";
-    return num.toString();
+    if (num >= 1_000_000) return (num / 1_000_000).toFixed(1) + "M";
+    if (num >= 1_000) return (num / 1_000).toFixed(1) + "K";
+    return Math.floor(num).toString();
   };
 
   return (
-    <div
-      className={`
-        relative p-4 rounded-xl
-        bg-gradient-card
-        border-2 transition-all duration-200
-        ${canAfford 
-          ? "border-secondary/50 hover:border-secondary hover:shadow-card cursor-pointer hover:scale-[1.02]" 
-          : "border-border/50 opacity-60 cursor-not-allowed"
-        }
-      `}
-      onClick={canAfford ? onBuy : undefined}
+    <Pressable
+      onPress={canAfford ? onBuy : undefined}
+      style={[styles.card, !canAfford && styles.cardDisabled]}
     >
-      {/* BHP Badge */}
-      {worker.bhpCompliant && (
-        <div 
-          className="absolute -top-2 -right-2 bg-secondary text-secondary-foreground rounded-full p-1.5 shadow-soft cursor-help"
-          onMouseEnter={() => setShowBhp(true)}
-          onMouseLeave={() => setShowBhp(false)}
-          onClick={(e) => e.stopPropagation()}
-        >
-          <ShieldCheck className="w-4 h-4" />
-        </div>
-      )}
+      <View style={styles.iconBox}>
+        <Text style={styles.icon}>{worker.icon}</Text>
+      </View>
 
-      {/* BHP Tooltip */}
-      {showBhp && (
-        <div className="absolute right-0 top-8 z-20 w-48 p-3 bg-popover border border-border rounded-lg shadow-card animate-slide-up">
-          <p className="font-display font-semibold text-sm text-secondary mb-2 flex items-center gap-1">
-            <ShieldCheck className="w-4 h-4" /> Zgodne z BHP
-          </p>
-          <ul className="text-xs text-muted-foreground space-y-1">
-            {worker.bhpFeatures.map((feature, i) => (
-              <li key={i} className="flex items-center gap-1">
-                <span className="text-secondary">✓</span> {feature}
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
+      <View style={styles.info}>
+        <View style={styles.titleRow}>
+          <Text style={styles.name}>{worker.name}</Text>
+          <View style={styles.badge}>
+            <Text style={styles.badgeText}>{worker.owned}</Text>
+          </View>
+        </View>
+        <Text style={styles.description} numberOfLines={2}>
+          {worker.description}
+        </Text>
+        <Text style={styles.perSecond}>+{worker.cottonPerSecond}/s każdy</Text>
+        {worker.bhpCompliant && (
+          <Text style={styles.bhp}>✓ Zgodne z BHP</Text>
+        )}
+      </View>
 
-      <div className="flex items-center gap-3">
-        {/* Icon */}
-        <div className="text-4xl w-14 h-14 flex items-center justify-center bg-muted rounded-xl">
-          {worker.icon}
-        </div>
-
-        {/* Info */}
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2">
-            <h3 className="font-display font-semibold text-foreground truncate">
-              {worker.name}
-            </h3>
-            <span className="bg-muted text-muted-foreground text-xs font-bold px-2 py-0.5 rounded-full">
-              {worker.owned}
-            </span>
-          </div>
-          <p className="text-xs text-muted-foreground truncate">
-            {worker.description}
-          </p>
-          <p className="text-xs text-secondary font-semibold mt-1">
-            +{worker.cottonPerSecond}/s każdy
-          </p>
-        </div>
-
-        {/* Cost */}
-        <div className={`
-          text-right px-3 py-2 rounded-lg font-display font-bold
-          ${canAfford 
-            ? "bg-primary text-primary-foreground" 
-            : "bg-muted text-muted-foreground"
-          }
-        `}>
-          <span className="text-sm block">{formatNumber(cost)}</span>
-          <span className="text-xs opacity-80">beli</span>
-        </div>
-      </div>
-    </div>
+      <View style={[styles.costBox, canAfford ? styles.costActive : styles.costDisabled]}>
+        <Text style={[styles.cost, canAfford ? styles.costTextActive : styles.costTextDisabled]}>
+          {formatNumber(cost)}
+        </Text>
+        <Text style={[styles.costLabel, !canAfford && styles.costTextDisabled]}>beli</Text>
+      </View>
+    </Pressable>
   );
 };
+
+const styles = StyleSheet.create({
+  card: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+    backgroundColor: "#0f1a2f",
+    borderWidth: 1,
+    borderColor: "#1d2a45",
+    borderRadius: 14,
+    padding: 12,
+  },
+  cardDisabled: {
+    opacity: 0.6,
+  },
+  iconBox: {
+    width: 56,
+    height: 56,
+    borderRadius: 12,
+    backgroundColor: "#152343",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  icon: {
+    fontSize: 30,
+  },
+  info: {
+    flex: 1,
+    gap: 4,
+  },
+  titleRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+  },
+  name: {
+    color: "#f6f8ff",
+    fontSize: 15,
+    fontWeight: "700",
+    flexShrink: 1,
+  },
+  badge: {
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    backgroundColor: "#1f2d4d",
+    borderRadius: 10,
+  },
+  badgeText: {
+    color: "#c7c9d6",
+    fontSize: 12,
+    fontWeight: "700",
+  },
+  description: {
+    color: "#9aa0b5",
+    fontSize: 12,
+  },
+  perSecond: {
+    color: "#8fe3ff",
+    fontSize: 12,
+    fontWeight: "700",
+  },
+  bhp: {
+    color: "#8be28b",
+    fontSize: 11,
+  },
+  costBox: {
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+    borderRadius: 10,
+    alignItems: "flex-end",
+    minWidth: 74,
+  },
+  costActive: {
+    backgroundColor: "#4a8ef0",
+  },
+  costDisabled: {
+    backgroundColor: "#1a263f",
+  },
+  cost: {
+    fontWeight: "800",
+    fontSize: 14,
+  },
+  costLabel: {
+    fontSize: 11,
+    opacity: 0.8,
+  },
+  costTextActive: {
+    color: "#f6f8ff",
+  },
+  costTextDisabled: {
+    color: "#9aa0b5",
+  },
+});

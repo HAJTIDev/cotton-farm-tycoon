@@ -1,6 +1,6 @@
-import { Worker } from "@/types/game";
+import { StyleSheet, Text, View } from "react-native";
+import { Worker } from "../../types/game";
 import { WorkerCard } from "./WorkerCard";
-import { Users, ShieldCheck } from "lucide-react";
 
 interface WorkerShopProps {
   workers: Worker[];
@@ -13,31 +13,17 @@ export const WorkerShop = ({ workers, cotton, getWorkerCost, onBuy }: WorkerShop
   const totalWorkers = workers.reduce((sum, w) => sum + w.owned, 0);
 
   return (
-    <div className="bg-card/80 backdrop-blur-sm rounded-2xl p-4 md:p-6 shadow-card border border-border">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-2">
-          <Users className="w-5 h-5 text-primary" />
-          <h2 className="font-display text-xl font-bold text-foreground">
-            Zatrudnij Pracowników
-          </h2>
-        </div>
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <ShieldCheck className="w-4 h-4 text-secondary" />
-          <span>Wszyscy zgodni z BHP</span>
-        </div>
-      </div>
+    <View style={styles.container}>
+      <View style={styles.headerRow}>
+        <Text style={styles.title}>Zatrudnij Pracowników</Text>
+        <Text style={styles.subtle}>Wszyscy zgodni z BHP</Text>
+      </View>
 
-      {/* Stats */}
-      <div className="flex gap-4 mb-4 text-sm">
-        <div className="bg-muted/50 px-3 py-1.5 rounded-lg">
-          <span className="text-muted-foreground">Zatrudnionych: </span>
-          <span className="font-bold text-foreground">{totalWorkers}</span>
-        </div>
-      </div>
+      <View style={styles.badgeRow}>
+        <Text style={styles.badgeText}>Zatrudnionych: {totalWorkers}</Text>
+      </View>
 
-      {/* Worker list */}
-      <div className="space-y-3 max-h-[50vh] overflow-y-auto pr-2 scrollbar-thin">
+      <View style={styles.list}>
         {workers.map((worker) => {
           const cost = getWorkerCost(worker);
           const canAfford = cotton >= cost;
@@ -51,7 +37,44 @@ export const WorkerShop = ({ workers, cotton, getWorkerCost, onBuy }: WorkerShop
             />
           );
         })}
-      </div>
-    </div>
+      </View>
+    </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    backgroundColor: "#111b33",
+    borderRadius: 16,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: "#1d2a45",
+    gap: 12,
+  },
+  headerRow: {
+    gap: 4,
+  },
+  title: {
+    color: "#f6f8ff",
+    fontSize: 20,
+    fontWeight: "700",
+  },
+  subtle: {
+    color: "#9aa0b5",
+    fontSize: 13,
+  },
+  badgeRow: {
+    backgroundColor: "#18243e",
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 10,
+    alignSelf: "flex-start",
+  },
+  badgeText: {
+    color: "#c7c9d6",
+    fontSize: 13,
+  },
+  list: {
+    gap: 10,
+  },
+});
