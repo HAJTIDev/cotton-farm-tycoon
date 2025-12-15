@@ -1,0 +1,16 @@
+{
+  "expo": {
+    "name": "Cotton Farm Tycoon",
+    "slug": "cotton-farm-tycoon",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "newArchEnabled": true,
+    "entryPoint": "./src/App.tsx",
+    "ios": {
+      "supportsTablet": true
+    }
+  }
+}

@@ -1,4 +1,4 @@
-import { RotateCcw, ShieldCheck } from "lucide-react";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 
 interface GameHeaderProps {
   onReset: () => void;
@@ -6,30 +6,58 @@ interface GameHeaderProps {
 
 export const GameHeader = ({ onReset }: GameHeaderProps) => {
   return (
-    <header className="flex items-center justify-between p-4 bg-card/60 backdrop-blur-sm border-b border-border">
-      <div className="flex items-center gap-3">
-        <span className="text-3xl">🌾</span>
-        <div>
-          <h1 className="font-display text-xl md:text-2xl font-bold text-foreground">
-            Cotton Clicker
-          </h1>
-          <p className="text-xs text-muted-foreground flex items-center gap-1">
-            <ShieldCheck className="w-3 h-3 text-secondary" />
-            100% zgodne z BHP
-          </p>
-        </div>
-      </div>
+    <View style={styles.container}>
+      <View style={styles.titleRow}>
+        <Text style={styles.emoji}>🌾</Text>
+        <View>
+          <Text style={styles.title}>Cotton Clicker</Text>
+          <Text style={styles.subTitle}>100% zgodne z BHP</Text>
+        </View>
+      </View>
 
-      <button
-        onClick={onReset}
-        className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm
-          text-muted-foreground hover:text-destructive hover:bg-destructive/10
-          transition-colors"
-        title="Resetuj grę"
-      >
-        <RotateCcw className="w-4 h-4" />
-        <span className="hidden md:inline">Reset</span>
-      </button>
-    </header>
+      <Pressable onPress={onReset} style={styles.resetButton} accessibilityLabel="Resetuj grę">
+        <Text style={styles.resetText}>↻ Reset</Text>
+      </Pressable>
+    </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderBottomWidth: 1,
+    borderColor: "#1d2a45",
+    marginBottom: 12,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  titleRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+  },
+  emoji: {
+    fontSize: 28,
+  },
+  title: {
+    color: "#f6f8ff",
+    fontSize: 20,
+    fontWeight: "800",
+  },
+  subTitle: {
+    color: "#8be28b",
+    fontSize: 12,
+  },
+  resetButton: {
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 10,
+    backgroundColor: "#1a263f",
+  },
+  resetText: {
+    color: "#ff8b8b",
+    fontWeight: "700",
+  },
+});

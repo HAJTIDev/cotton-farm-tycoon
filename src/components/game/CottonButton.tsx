@@ -1,5 +1,5 @@
-import { FloatingNumber } from "@/types/game";
-import { MouseEvent } from "react";
+import { GestureResponderEvent, Pressable, StyleSheet, Text, View } from "react-native";
+import { FloatingNumber } from "../../types/game";
 
 interface CottonButtonProps {
   onClick: (x: number, y: number) => void;
@@ -8,61 +8,112 @@ interface CottonButtonProps {
 }
 
 export const CottonButton = ({ onClick, isClicking, floatingNumbers }: CottonButtonProps) => {
-  const handleClick = (e: MouseEvent<HTMLButtonElement>) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    onClick(x, y);
+  const handlePress = (event: GestureResponderEvent) => {
+    const { locationX, locationY } = event.nativeEvent;
+    onClick(locationX, locationY);
   };
 
   return (
-    <div className="relative flex items-center justify-center">
-      {/* Floating numbers */}
+    <View style={styles.wrapper}>
       {floatingNumbers.map((num) => (
-        <div
+        <Text
           key={num.id}
-          className="absolute pointer-events-none font-display font-bold text-2xl text-gold animate-cotton-pop z-10"
-          style={{ left: num.x, top: num.y }}
+          style={[
+            styles.floating,
+            {
+              left: num.x,
+              top: num.y,
+            },
+          ]}
         >
-          +{num.value}
-        </div>
+          +{Math.floor(num.value)}
+        </Text>
       ))}
 
-      {/* Glow effect */}
-      <div className="absolute w-52 h-52 rounded-full bg-cotton-glow/30 animate-pulse-glow blur-xl" />
+      <View style={styles.glow} />
 
-      {/* Main button */}
-      <button
-        onClick={handleClick}
-        className={`
-          relative w-48 h-48 rounded-full 
-          bg-gradient-cotton
-          shadow-glow
-          border-4 border-cotton-glow/50
-          flex items-center justify-center
-          transition-all duration-150
-          hover:scale-105 hover:shadow-[0_0_50px_hsl(45_80%_70%/0.7)]
-          active:scale-95
-          cursor-pointer select-none
-          ${isClicking ? "animate-bounce-click" : ""}
-        `}
+      <Pressable
+        onPressIn={handlePress}
+        style={[styles.button, isClicking && styles.buttonActive]}
       >
-        {/* Cotton texture */}
-        <div className="absolute inset-4 rounded-full bg-cotton opacity-80" />
-        
-        {/* Cotton puffs */}
-        <div className="relative text-7xl animate-float">
-          ☁️
-        </div>
+        <View style={styles.inner} />
+        <Text style={styles.emoji}>☁️</Text>
+        <View style={styles.shine} />
+      </Pressable>
 
-        {/* Shine effect */}
-        <div className="absolute top-4 left-8 w-8 h-8 rounded-full bg-white/40 blur-sm" />
-      </button>
-
-      {/* Click instruction */}
-      <p className="absolute -bottom-8 text-muted-foreground text-sm font-body">
-        Kliknij, aby zebrać bawełnę!
-      </p>
-    </div>
+      <Text style={styles.caption}>Kliknij, aby zebrać bawełnę!</Text>
+    </View>
   );
 };
+
+const styles = StyleSheet.create({
+  wrapper: {
+    position: "relative",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 24,
+  },
+  button: {
+    width: 192,
+    height: 192,
+    borderRadius: 96,
+    backgroundColor: "#fef7e5",
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 4,
+    borderColor: "rgba(255, 212, 128, 0.6)",
+    shadowColor: "#ffd37a",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.6,
+    shadowRadius: 18,
+    elevation: 8,
+    transform: [{ scale: 1 }],
+  },
+  buttonActive: {
+    transform: [{ scale: 0.94 }],
+  },
+  inner: {
+    position: "absolute",
+    top: 12,
+    left: 12,
+    right: 12,
+    bottom: 12,
+    borderRadius: 84,
+    backgroundColor: "#fffdf8",
+    opacity: 0.9,
+  },
+  emoji: {
+    fontSize: 64,
+  },
+  shine: {
+    position: "absolute",
+    top: 16,
+    left: 32,
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: "rgba(255,255,255,0.5)",
+  },
+  caption: {
+    marginTop: 12,
+    color: "#c7c9d6",
+    fontSize: 14,
+  },
+  glow: {
+    position: "absolute",
+    width: 210,
+    height: 210,
+    borderRadius: 105,
+    backgroundColor: "rgba(255, 215, 140, 0.15)",
+    shadowColor: "#ffd37a",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.5,
+    shadowRadius: 30,
+  },
+  floating: {
+    position: "absolute",
+    color: "#ffd37a",
+    fontSize: 22,
+    fontWeight: "700",
+  },
+});

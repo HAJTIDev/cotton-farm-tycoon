@@ -1,4 +1,5 @@
-import { GameState } from "@/types/game";
+import { StyleSheet, Text, View } from "react-native";
+import { GameState } from "../../types/game";
 
 interface StatsDisplayProps {
   gameState: GameState;
@@ -6,37 +7,67 @@ interface StatsDisplayProps {
 
 export const StatsDisplay = ({ gameState }: StatsDisplayProps) => {
   const formatNumber = (num: number): string => {
-    if (num >= 1000000000) return (num / 1000000000).toFixed(1) + "B";
-    if (num >= 1000000) return (num / 1000000).toFixed(1) + "M";
-    if (num >= 1000) return (num / 1000).toFixed(1) + "K";
+    if (num >= 1_000_000_000) return (num / 1_000_000_000).toFixed(1) + "B";
+    if (num >= 1_000_000) return (num / 1_000_000).toFixed(1) + "M";
+    if (num >= 1_000) return (num / 1_000).toFixed(1) + "K";
     return Math.floor(num).toString();
   };
 
   return (
-    <div className="text-center space-y-2">
-      {/* Main counter */}
-      <div className="relative">
-        <h1 className="font-display text-6xl md:text-7xl font-bold text-foreground">
-          {formatNumber(gameState.cotton)}
-        </h1>
-        <p className="font-display text-xl text-muted-foreground mt-1">
-          beli bawełny
-        </p>
-      </div>
+    <View style={styles.container}>
+      <View style={styles.counterBlock}>
+        <Text style={styles.mainNumber}>{formatNumber(gameState.cotton)}</Text>
+        <Text style={styles.subtitle}>beli bawełny</Text>
+      </View>
 
-      {/* Per second */}
-      <div className="flex items-center justify-center gap-2 text-muted-foreground">
-        <span className="text-lg">⚡</span>
-        <p className="font-body text-lg">
-          <span className="font-semibold text-secondary">{gameState.cottonPerSecond.toFixed(1)}</span>
-          {" "}na sekundę
-        </p>
-      </div>
+      <View style={styles.perSecondRow}>
+        <Text style={styles.perSecondIcon}>⚡</Text>
+        <Text style={styles.perSecondText}>
+          <Text style={styles.perSecondValue}>{gameState.cottonPerSecond.toFixed(1)}</Text> na sekundę
+        </Text>
+      </View>
 
-      {/* Total collected */}
-      <div className="text-sm text-muted-foreground/70">
-        Zebrano łącznie: {formatNumber(gameState.totalCotton)}
-      </div>
-    </div>
+      <Text style={styles.total}>Zebrano łącznie: {formatNumber(gameState.totalCotton)}</Text>
+    </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    alignItems: "center",
+    gap: 8,
+  },
+  counterBlock: {
+    alignItems: "center",
+  },
+  mainNumber: {
+    fontSize: 56,
+    fontWeight: "800",
+    color: "#f6f8ff",
+  },
+  subtitle: {
+    marginTop: 4,
+    color: "#c7c9d6",
+    fontSize: 18,
+  },
+  perSecondRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+  perSecondIcon: {
+    fontSize: 18,
+  },
+  perSecondText: {
+    color: "#c7c9d6",
+    fontSize: 18,
+  },
+  perSecondValue: {
+    color: "#8fe3ff",
+    fontWeight: "700",
+  },
+  total: {
+    color: "#9aa0b5",
+    fontSize: 14,
+  },
+});
